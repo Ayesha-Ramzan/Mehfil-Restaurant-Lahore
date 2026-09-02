@@ -1,0 +1,697 @@
+<!doctype html>
+<!--
+  Mehfil — Lahori restaurant, Mall Road, Lahore.
+  Single-file site: markup, styles and behaviour in one document.
+  Photography lives in frontend/src/assets/ (referenced by relative path).
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mehfil — Slow-Fired Lahori Cooking, Mall Road</title>
+<meta name="description" content="An elite Lahori table on Mall Road. Nihari at eight hours, sealed clay-pot biryani, mango-wood grill. Reserve a table at Mehfil, Lahore." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='4'%20fill='%231f1a15'/%3E%3Cpath%20d='M9%2022V10l7%208%207-8v12'%20fill='none'%20stroke='%23cfa75c'%20stroke-width='2.5'%20stroke-linecap='round'%20stroke-linejoin='round'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Karla:wght@300;400;500&display=swap" rel="stylesheet" />
+
+<style>
+/* ===================== CSS — design system: dark charcoal + brass ===================== */
+:root {
+  --background: #29231d; --foreground: #f0e9dd; --ink: #201b16; --card: #332b24;
+  --muted-fg: #b0a494; --border: #4a4136; --brass: #cfa75c; --brass-soft: #9c7c3f;
+  --veil: linear-gradient(to top, #241f19 0%, rgba(36,31,25,.7) 35%, rgba(36,31,25,.15) 70%, transparent 100%);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--background); color: var(--foreground);
+  font-family: "Karla", ui-sans-serif, system-ui, sans-serif; font-weight: 300;
+  line-height: 1.6; -webkit-font-smoothing: antialiased; }
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; cursor: pointer; background: none; border: none; color: inherit; }
+.font-display { font-family: "Cormorant Garamond", Georgia, serif; font-weight: 500; }
+.eyebrow { font-size: 0.62rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted-fg); font-weight: 400; }
+.rule-brass { height: 1px; background: var(--brass); }
+.veil { background: var(--veil); }
+.container { max-width: 72rem; margin-inline: auto; padding-inline: 1.25rem; }
+@media (min-width: 768px) { .container { padding-inline: 2rem; } }
+.btn-brass { display: inline-block; background: var(--brass); color: var(--ink);
+  padding: 1rem 2rem; font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; transition: opacity .2s; border: none; }
+.btn-brass:hover { opacity: .88; }
+/* Header */
+#site-header { position: fixed; inset-inline: 0; top: 0; z-index: 50;
+  transition: background-color .5s, border-color .5s; border-bottom: 1px solid transparent; }
+#site-header.scrolled { background: rgba(32,27,22,.95); backdrop-filter: blur(4px); border-color: rgba(74,65,54,.6); }
+.header-inner { display: flex; align-items: center; justify-content: space-between; padding-block: 1rem; }
+.brand { line-height: 1; display: block; }
+.brand .name { font-size: 1.5rem; letter-spacing: .18em; }
+.brand .desc { display: block; margin-top: .25rem; font-size: 0.55rem; }
+.nav-desktop { display: none; align-items: center; gap: 1.75rem; }
+@media (min-width: 1024px) { .nav-desktop { display: flex; } .burger { display: none !important; } }
+.nav-desktop a { font-size: 0.78rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted-fg); transition: color .2s; }
+.nav-desktop a:hover, .nav-desktop a.active { color: var(--brass); }
+.order-link { border: 1px solid var(--brass-soft); padding: .5rem 1rem;
+  font-size: 0.7rem; letter-spacing: .18em; text-transform: uppercase; color: var(--brass) !important; }
+.order-link:hover { background: var(--brass); color: var(--ink) !important; }
+#mobile-overlay { position: fixed; inset: 0; z-index: 40; background: var(--ink);
+  padding: 7rem 1.5rem 2rem; display: none; }
+#mobile-overlay.open { display: block; }
+#mobile-overlay nav { display: flex; flex-direction: column; gap: 1.5rem; }
+#mobile-overlay nav a { font-family: "Cormorant Garamond", serif; font-size: 1.9rem; }
+#mobile-bar { position: fixed; inset-inline: 0; bottom: 0; z-index: 40;
+  border-top: 1px solid rgba(74,65,54,.6); background: rgba(32,27,22,.95);
+  padding: .75rem 1.25rem; backdrop-filter: blur(4px); }
+#mobile-bar a { display: block; width: 100%; background: var(--brass); color: var(--ink);
+  text-align: center; padding: .8rem; font-size: .72rem; letter-spacing: .2em; text-transform: uppercase; }
+@media (min-width: 1024px) { #mobile-bar { display: none; } }
+/* Pages */
+.page { display: none; }
+.page.active { display: block; }
+.page-pad { padding-top: 9rem; padding-bottom: 6rem; }
+</style>
+<style>
+/* Home */
+.hero { position: relative; height: 92vh; min-height: 560px; overflow: hidden; }
+.hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.hero-bottom { position: absolute; inset-inline: 0; bottom: 0; }
+.hero h1 { margin-top: 1.25rem; font-size: 3rem; line-height: 1.05; max-width: 46rem; }
+.hero h1 .it { font-style: italic; color: var(--brass); }
+@media (min-width: 768px) { .hero h1 { font-size: 4.5rem; } }
+.hero-cta { margin-top: 2rem; display: flex; flex-wrap: wrap; align-items: center; gap: 2rem; }
+.hero-cta .rating { font-size: .72rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted-fg); }
+.split { display: grid; gap: 3.5rem; align-items: center; }
+@media (min-width: 768px) { .split { grid-template-columns: 1fr 1fr; gap: 4.5rem; } }
+.split img { width: 100%; height: 100%; object-fit: cover; aspect-ratio: 4/5; }
+.prose p { margin-top: 1.5rem; color: var(--muted-fg); font-size: .95rem; }
+.prose h2 { font-size: 2.5rem; line-height: 1.1; }
+@media (min-width: 768px) { .prose h2 { font-size: 3.4rem; } }
+.prose .it { font-style: italic; color: var(--brass); }
+.drop::first-letter { font-family: "Cormorant Garamond", serif; font-size: 3.2em; float: left; line-height: .8; padding-right: .6rem; color: var(--brass); }
+.sourcing { display: grid; gap: 1px; background: rgba(74,65,54,.5); border: 1px solid rgba(74,65,54,.5); }
+@media (min-width: 768px) { .sourcing { grid-template-columns: repeat(2, 1fr); } }
+.sourcing > div { background: var(--background); padding: 1.5rem; }
+.sourcing dd { margin-top: .5rem; font-size: .875rem; color: rgba(240,233,221,.85); }
+.kitchen-band { position: relative; }
+.kitchen-band img { position: static; height: 60vh; width: 100%; object-fit: cover; }
+.kitchen-band p { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 36rem; padding-inline: 1.25rem; text-align: center;
+  font-family: "Cormorant Garamond", serif; font-size: 1.3rem; font-style: italic; color: rgba(240,233,221,.9); }
+.reviews { padding-block: 6rem; }
+.reviews-grid { margin-top: 3.5rem; display: grid; gap: 3.5rem; }
+@media (min-width: 768px) { .reviews-grid { grid-template-columns: repeat(3, 1fr); } }
+.reviews blockquote { font-family: "Cormorant Garamond", serif; font-size: 1.3rem; font-style: italic; color: rgba(240,233,221,.9); }
+.reviews figcaption { margin-top: 1.5rem; }
+.reviews .who { display: block; font-size: .875rem; color: var(--brass); }
+.reviews .ctx { display: block; font-size: .75rem; color: var(--muted-fg); }
+.exclusivity { border-top: 1px solid rgba(74,65,54,.6); }
+.exclusivity-grid { display: grid; gap: 1px; background: rgba(74,65,54,.5); }
+@media (min-width: 768px) { .exclusivity-grid { grid-template-columns: repeat(3, 1fr); } }
+.exclusivity-grid > div { background: var(--background); padding: 3.5rem 1.75rem; }
+.exclusivity-grid h3 { margin-top: 1rem; font-size: 1.9rem; }
+.exclusivity-grid p { margin-top: .75rem; font-size: .875rem; color: var(--muted-fg); }
+.closing { max-width: 48rem; margin-inline: auto; padding: 7rem 1.25rem; text-align: center; }
+.closing h2 { font-size: 2.6rem; }
+@media (min-width: 768px) { .closing h2 { font-size: 3.2rem; } }
+.closing p { margin-top: 1rem; font-size: .875rem; color: var(--muted-fg); }
+/* Menu */
+.page-head { max-width: 56rem; margin-inline: auto; text-align: center; }
+.page-head h1 { margin-top: 1.25rem; font-size: 3rem; }
+@media (min-width: 768px) { .page-head h1 { font-size: 3.6rem; } }
+.page-head .lede { margin: 1.25rem auto 0; max-width: 32rem; font-size: .875rem; color: var(--muted-fg); }
+.cat-nav { margin-top: 3rem; display: flex; flex-wrap: wrap; justify-content: center; gap: .75rem 1.5rem; }
+.cat-nav a { font-size: .7rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted-fg); }
+.cat-nav a:hover { color: var(--brass); }
+.menu-wrap { max-width: 56rem; margin-inline: auto; padding-inline: 1.25rem; }
+@media (min-width: 768px) { .menu-wrap { padding-inline: 2rem; } }
+.cat { margin-top: 5rem; scroll-margin-top: 7rem; }
+.cat-head { text-align: center; }
+.cat-head h2 { font-size: 2.4rem; }
+.cat-head .kicker { margin-top: .5rem; font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; color: var(--muted-fg); }
+.cat-head .rule-brass { width: 4rem; margin: 1.5rem auto 0; opacity: .5; }
+.dish-list { margin-top: 2.5rem; list-style: none; display: grid; gap: 2.25rem; }
+.dish-top { display: flex; align-items: baseline; gap: .75rem; }
+.dish-top h3 { font-family: "Cormorant Garamond", serif; font-size: 1.5rem; line-height: 1.3; font-weight: 500; }
+.dotted-lead { flex: 1; border-bottom: 1px dotted var(--brass); opacity: .5; transform: translateY(-4px); display: none; }
+@media (min-width: 640px) { .dotted-lead { display: block; } }
+.dish-top .price { font-size: .875rem; white-space: nowrap; color: var(--brass); }
+.dish-note { margin-top: .5rem; max-width: 42rem; font-size: .875rem; color: var(--muted-fg); }
+.dish-sourcing { margin-top: .5rem; max-width: 42rem; font-size: .75rem; font-style: italic; color: rgba(240,233,221,.55); }
+.dish-meta { margin-top: .75rem; display: flex; flex-wrap: wrap; gap: .25rem 1rem;
+  font-size: .65rem; letter-spacing: .16em; text-transform: uppercase; color: rgba(176,164,148,.8); }
+.dish-meta .spice { color: var(--brass-soft); }
+.menu-footnote { margin-top: 5rem; text-align: center; font-size: .75rem; color: var(--muted-fg); }
+</style>
+<style>
+/* Forms */
+form { display: grid; gap: 2rem; }
+.grid-2 { display: grid; gap: 1.5rem; }
+@media (min-width: 640px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
+label.block-l { display: block; }
+.field { width: 100%; margin-top: .75rem; background: transparent;
+  border: 1px solid var(--border); padding: .75rem 1rem; font-size: .875rem;
+  color: var(--foreground); outline: none; font-family: inherit; }
+.field:focus { border-color: var(--brass); }
+.field::placeholder { color: rgba(176,164,148,.6); }
+select.field option { background: var(--card); }
+.chip-row { margin-top: .75rem; display: flex; flex-wrap: wrap; gap: .5rem; }
+.chip { border: 1px solid var(--border); padding: .5rem 1rem; font-size: .875rem;
+  color: var(--muted-fg); transition: border-color .2s; }
+.chip:hover { border-color: var(--brass-soft); }
+.chip.on { border-color: var(--brass); background: var(--brass); color: var(--ink); }
+.chip-sq { width: 2.75rem; height: 2.75rem; padding: 0; text-align: center; }
+.form-error { color: #d47a6a; font-size: .875rem; }
+.form-hint { margin-top: .75rem; font-size: .75rem; color: var(--muted-fg); }
+/* Gallery */
+.gal-grid { display: grid; gap: 1px; background: rgba(74,65,54,.5); grid-template-columns: repeat(2, 1fr); }
+@media (min-width: 768px) { .gal-grid { grid-template-columns: repeat(3, 1fr); } }
+.gal-grid img { width: 100%; height: 100%; aspect-ratio: 1; object-fit: cover;
+  cursor: pointer; opacity: .85; transition: opacity .2s; }
+.gal-grid img:hover { opacity: 1; }
+#lightbox { position: fixed; inset: 0; z-index: 60; background: rgba(20,17,14,.95);
+  display: none; align-items: center; justify-content: center; padding: 2rem; }
+#lightbox.open { display: flex; }
+#lightbox img { max-height: 85vh; max-width: 90vw; object-fit: contain; }
+#lightbox .close { position: absolute; top: 1.25rem; right: 1.75rem; font-size: 2rem; color: var(--muted-fg); }
+/* Footer */
+footer { border-top: 1px solid rgba(74,65,54,.6); background: var(--ink); padding-bottom: 6rem; }
+@media (min-width: 1024px) { footer { padding-bottom: 0; } }
+.foot-grid { display: grid; gap: 3rem; padding-block: 4rem; }
+@media (min-width: 768px) { .foot-grid { grid-template-columns: repeat(3, 1fr); } }
+footer .name { font-size: 1.5rem; letter-spacing: .18em; }
+footer p, footer dd, footer .txt { color: var(--muted-fg); font-size: .875rem; }
+footer dl div { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin-top: .75rem; }
+footer dd { color: var(--foreground) !important; }
+footer a.tel { display: inline-block; margin-top: 1rem; color: var(--brass); font-size: .875rem; }
+footer .social { margin-top: 2rem; display: flex; gap: 1.25rem; }
+footer .social a:hover { color: var(--brass); }
+.map-img { width: 100%; height: 10rem; object-fit: cover; opacity: .6; filter: grayscale(1);
+  border: 1px solid rgba(74,65,54,.6); transition: opacity .2s; }
+.map-img:hover { opacity: .9; }
+.press { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 2rem; padding-block: 1.5rem; }
+.press span { font-family: "Cormorant Garamond", serif; font-size: .875rem; letter-spacing: .2em; text-transform: uppercase; color: rgba(176,164,148,.6); }
+.foot-legal { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .75rem;
+  border-top: 1px solid rgba(74,65,54,.4); padding-block: 1.5rem; font-size: .75rem; color: var(--muted-fg); }
+.foot-legal a:hover { color: var(--brass); }
+</style>
+
+
+</head>
+<body>
+<!-- ===================== Markup ===================== -->
+<header id="site-header">
+  <div class="container header-inner">
+    <a href="#/" class="brand font-display">
+      <span class="name">MEHFIL</span>
+      <span class="desc eyebrow">Lahore</span>
+    </a>
+    <nav class="nav-desktop" id="nav-desktop">
+      <a href="#/menu">Menu</a>
+      <a href="#/reservations">Reservations</a>
+      <a href="#/story">Our Story</a>
+      <a href="#/chef">Chef</a>
+      <a href="#/gallery">Gallery</a>
+      <a href="#/visit">Visit</a>
+      <a href="#/order" class="order-link">Order Online</a>
+    </nav>
+    <button class="burger" id="burger" aria-label="Open menu" style="font-size:1.4rem;">☰</button>
+  </div>
+</header>
+
+<div id="mobile-overlay">
+  <nav>
+    <a href="#/menu">Menu</a>
+    <a href="#/reservations">Reservations</a>
+    <a href="#/story">Our Story</a>
+    <a href="#/chef">Chef</a>
+    <a href="#/gallery">Gallery</a>
+    <a href="#/visit">Visit</a>
+    <a href="#/order" class="order-link" style="align-self:flex-start;margin-top:1rem;">Order Online</a>
+  </nav>
+</div>
+
+<div id="mobile-bar"><a href="#/reservations">Reserve a table</a></div>
+
+<main id="app">
+
+  <!-- ============ HOME ============ -->
+  <section class="page" id="page-home">
+    <div class="hero">
+      <img src="frontend/src/assets/hero-nihari.jpg" alt="Nihari beef shank in a hammered brass bowl with marrow bone and ginger" />
+      <div class="veil" style="position:absolute;inset:0;"></div>
+      <div class="hero-bottom">
+        <div class="container" style="padding-bottom:5rem;">
+          <p class="eyebrow">Mall Road · Lahore</p>
+          <h1 class="font-display">Slow-fired Lahori cooking.<br /><span class="it">Since dawn, every dawn.</span></h1>
+          <div class="hero-cta">
+            <a href="#/reservations" class="btn-brass">Reserve a table</a>
+            <span class="rating">4.9 · 2,140 guests</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container" style="padding-block:6rem;">
+      <div class="split">
+        <img loading="lazy" src="frontend/src/assets/dish-champ.jpg" alt="Mutton champ glistening on a brass platter over charred mango-wood coals" />
+        <div class="prose">
+          <p class="eyebrow">The kitchen</p>
+          <h2 class="font-display" style="margin-top:1.25rem;">Nothing here is rushed.<br /><span class="it">That is the whole point.</span></h2>
+          <p>The nihari begins before the city wakes and is still on the fire when the first table sits down. The biryani is sealed in clay with dough and opened in front of you. The champ goes over mango wood, the way this city used to cook, because the way this city used to cook was better.</p>
+          <p>We are not recreating old Lahore. We simply never stopped cooking it.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="kitchen-band">
+      <img loading="lazy" src="frontend/src/assets/kitchen-tandoor.jpg" alt="Chef placing seekh kebab skewers into a glowing clay tandoor" />
+      <div class="veil" style="position:absolute;inset:0;"></div>
+      <p>The tandoor is lit at four in the afternoon and never allowed to drop.</p>
+    </div>
+
+    <div class="container reviews">
+      <p class="eyebrow" style="text-align:center;">In the guests' words</p>
+      <div class="reviews-grid">
+        <figure>
+          <blockquote>“We came for the nihari and stayed three hours. The marrow arrived in the bone with a spoon and nobody at the table spoke for a minute.”</blockquote>
+          <figcaption><span class="who">Ayesha Tariq</span><span class="ctx">Dined in December</span></figcaption>
+        </figure>
+        <figure>
+          <blockquote>“I have eaten champ across this city for twenty years. This is the only kitchen that still uses mango wood and you can taste the difference from the doorway.”</blockquote>
+          <figcaption><span class="who">Faisal Nadeem</span><span class="ctx">Regular since 2019</span></figcaption>
+        </figure>
+        <figure>
+          <blockquote>“They opened the biryani pot at the table and the whole room turned. That is theatre you cannot fake.”</blockquote>
+          <figcaption><span class="who">Sana Qureshi</span><span class="ctx">Anniversary dinner</span></figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="closing">
+      <h2 class="font-display">A table at Mehfil</h2>
+      <p>Dinner from six. Tables for eight or more, please speak to the maître d'.</p>
+      <a href="#/reservations" class="btn-brass" style="margin-top:2.25rem;">Reserve</a>
+    </div>
+  </section>
+
+  <!-- ============ MENU (rendered by JS) ============ -->
+  <section class="page page-pad" id="page-menu"></section>
+  <!-- ============ RESERVATIONS ============ -->
+  <section class="page page-pad" id="page-reservations">
+    <div style="max-width:42rem;margin-inline:auto;padding-inline:1.25rem;">
+      <header style="text-align:center;">
+        <p class="eyebrow">Reservations</p>
+        <h1 class="font-display" style="margin-top:1.25rem;font-size:3rem;">A table for the evening</h1>
+        <p style="margin:1.25rem auto 0;max-width:28rem;font-size:.875rem;color:var(--muted-fg);">We hold your table for twenty minutes. Confirmation comes by WhatsApp from the maître d', usually within the hour.</p>
+      </header>
+      <form id="reservation-form" style="margin-top:3.5rem;" novalidate>
+        <div class="grid-2">
+          <label class="block-l"><span class="eyebrow">Name</span>
+            <input name="name" maxlength="80" class="field" placeholder="Your name" /></label>
+          <label class="block-l"><span class="eyebrow">Phone</span>
+            <input name="phone" maxlength="20" inputmode="tel" class="field" placeholder="+92 300 0000000" /></label>
+        </div>
+        <label class="block-l"><span class="eyebrow">Date</span>
+          <input type="date" name="date" class="field" /></label>
+        <div><span class="eyebrow">Time</span><div class="chip-row" id="time-chips"></div></div>
+        <div><span class="eyebrow">Party size</span><div class="chip-row" id="guest-chips"></div>
+          <p class="form-hint" id="guest-hint"></p></div>
+        <label class="block-l"><span class="eyebrow">Occasion</span>
+          <select name="occasion" class="field" id="occasion-select"></select></label>
+        <label class="block-l"><span class="eyebrow">Anything we should know</span>
+          <textarea name="requests" rows="4" maxlength="400" class="field" placeholder="Allergies, seating, a quiet corner…"></textarea></label>
+        <p class="form-error" id="form-error" hidden></p>
+        <button type="submit" class="btn-brass" style="width:100%;">Request the table</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ============ STORY / CHEF / VISIT ============ -->
+  <section class="page page-pad" id="page-story">
+    <div class="container" style="max-width:44rem;">
+      <header style="text-align:center;">
+        <p class="eyebrow">Our Story</p>
+        <h1 class="font-display" style="margin-top:1.25rem;font-size:3rem;">A house of slow fires</h1>
+      </header>
+      <div class="prose" style="margin-top:3rem;">
+        <p class="drop">Mehfil began in a single room on Mall Road with one tandoor, one pot of nihari and a conviction that the old cooking of Lahore — the long, patient, unhurried cooking — deserved a proper table. Not a cart, not a rushed kitchen, but a room where the food could arrive the way it was meant to.</p>
+        <p>Twelve years on, the pot has never missed a dawn. The suppliers are the same. The mango wood is cut in the same yards. The biryani is still sealed with dough, the champ is still finished over coals, and the first portion of the morning still goes to whoever is sitting at the counter when the shutters rise.</p>
+        <p>We are a small house. We would rather cook fewer things properly than many things quickly.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="page page-pad" id="page-chef">
+    <div class="container">
+      <div class="split">
+        <img loading="lazy" src="frontend/src/assets/chef-portrait.jpg" alt="Portrait of the chef in the kitchen, apron dusted with flour" />
+        <div class="prose">
+          <p class="eyebrow">The Chef</p>
+          <h1 class="font-display" style="margin-top:1.25rem;font-size:3rem;">Ustad Iqbal Hussain</h1>
+          <p>Ustad Iqbal learned nihari at his father's shoulder in a kitchen no wider than a doorway, off the old Anarkali. He has cooked it every morning since he was fourteen. He does not measure with spoons; he measures with steam, with colour, with the sound the pot makes at hour six.</p>
+          <p>He writes the day's fire on a slate by the pass each afternoon. If it says nalli, there are nalli. When it is gone, he draws a line through it himself.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="page page-pad" id="page-gallery">
+    <div class="container" style="max-width:60rem;">
+      <header style="text-align:center;">
+        <p class="eyebrow">Gallery</p>
+        <h1 class="font-display" style="margin-top:1.25rem;font-size:3rem;">The house, the fire, the table</h1>
+      </header>
+      <div class="gal-grid" style="margin-top:3.5rem;" id="gallery-grid"></div>
+    </div>
+  </section>
+
+  <section class="page page-pad" id="page-visit">
+    <div class="container" style="max-width:64rem;">
+      <header style="text-align:center;">
+        <p class="eyebrow">Mall Road</p>
+        <h1 class="font-display" style="margin-top:1.25rem;font-size:3rem;">Visit</h1>
+      </header>
+      <div class="split" style="margin-top:3.5rem;align-items:start;">
+        <div>
+          <p class="eyebrow">Address</p>
+          <p style="margin-top:1rem;color:rgba(240,233,221,.85);">12 Ganga Ram Building, Mall Road, Lahore</p>
+          <p style="margin-top:.5rem;color:var(--muted-fg);font-size:.875rem;" dir="rtl">۱۲ گنگا رام بلڈنگ، مال روڈ، لاہور</p>
+          <p class="eyebrow" style="margin-top:2.5rem;">Hours</p>
+          <dl id="visit-hours" style="margin-top:1rem;"></dl>
+          <p class="eyebrow" style="margin-top:2.5rem;">Direct</p>
+          <a id="visit-tel" class="tel" href="#" style="margin-top:1rem;display:block;"></a>
+          <p style="margin-top:1rem;max-width:24rem;font-size:.75rem;color:var(--muted-fg);">Valet from 6pm. Two covered bays held for guests with reservations. Private dining for twelve on the mezzanine, by arrangement.</p>
+        </div>
+        <img loading="lazy" src="frontend/src/assets/ambience.jpg" alt="The Mehfil dining room, dark green walls and brass pendant lamps" style="width:100%;object-fit:cover;" />
+      </div>
+    </div>
+  </section>
+
+  <section class="page page-pad" id="page-order">
+    <div class="container" style="max-width:36rem;text-align:center;">
+      <p class="eyebrow">Order Online</p>
+      <h1 class="font-display" style="margin-top:1.25rem;font-size:3rem;">Straight from the fire</h1>
+      <p style="margin:1.25rem auto 0;max-width:28rem;font-size:.875rem;color:var(--muted-fg);">Tell us what you are craving on WhatsApp and we will have it packed, sealed and on its way. Delivery across central Lahore.</p>
+      <a id="order-wa" class="btn-brass" style="margin-top:2.5rem;" href="#" target="_blank" rel="noopener">Order on WhatsApp</a>
+    </div>
+  </section>
+
+</main>
+
+<div id="lightbox"><span class="close">×</span><img alt="" /></div>
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="container foot-grid">
+    <div>
+      <span class="name font-display">MEHFIL</span>
+      <p style="margin-top:1rem;max-width:20rem;">12 Ganga Ram Building, Mall Road, Lahore</p>
+      <p style="margin-top:.5rem;" dir="rtl">۱۲ گنگا رام بلڈنگ، مال روڈ، لاہور</p>
+      <a class="tel" id="footer-tel" href="#"></a>
+    </div>
+    <div>
+      <p class="eyebrow">Hours</p>
+      <dl id="footer-hours" style="margin-top:1.25rem;"></dl>
+      <div class="social txt">
+        <a href="https://instagram.com" target="_blank" rel="noreferrer">Instagram</a>
+        <a href="https://facebook.com" target="_blank" rel="noreferrer">Facebook</a>
+      </div>
+    </div>
+    <div>
+      <p class="eyebrow">Find us</p>
+      <a href="https://maps.google.com/?q=Mall+Road+Lahore" target="_blank" rel="noreferrer" style="display:block;margin-top:1.25rem;">
+        <img loading="lazy" class="map-img" alt="Map showing the restaurant on Mall Road, Lahore"
+          src="https://static-maps.yandex.ru/1.x/?ll=74.3300,31.5600&z=14&size=640,360&l=map" />
+      </a>
+      <p style="margin-top:.75rem;font-size:.75rem;color:var(--muted-fg);">Valet from 6pm. Two covered bays for guests with reservations.</p>
+    </div>
+  </div>
+  <div class="container">
+    <div class="rule-brass" style="opacity:.4;"></div>
+    <div class="press">
+      <span>Dawn</span><span>Something Haute</span><span>Destinations</span><span>Good Times</span><span>The Friday Times</span>
+    </div>
+    <div class="foot-legal">
+      <span>© <span id="year"></span> Mehfil, Lahore. All rights reserved.</span>
+      <a href="#/visit">Contact &amp; location</a>
+    </div>
+  </div>
+</footer>
+/* ===================== Scripts ===================== */
+<script>
+"use strict";
+
+/* ---- Data (from frontend/src/data/menu.ts) ---- */
+var RESTAURANT = {
+  name: "Mehfil",
+  phone: "+92 300 000 0000",
+  whatsapp: "923244060602",
+  address: "12 Ganga Ram Building, Mall Road, Lahore",
+  hours: [
+    { day: "Tuesday — Thursday", time: "6:00 pm — 12:30 am" },
+    { day: "Friday — Sunday", time: "1:00 pm — 1:30 am" },
+    { day: "Monday", time: "Closed" }
+  ]
+};
+var SPICE_MARK = { mild: "○", medium: "◐", hot: "●" };
+var SPICE_LABEL = { mild: "Mild", medium: "Medium", hot: "Hot" };
+var MENU = [
+  { id: "starters", title: "Starters", kicker: "To begin, at the table", dishes: [
+    { id: "kata-kat", name: "Kata Kat, Table-Side", note: "Minced offal and spice cut on the tawa until it sings; the sound is the dish.", price: "PKR ——", spice: "medium", tags: ["Halal"], sourcing: "Trotters and brain from Bakar Mandi, dawn delivery." },
+    { id: "dahi-bhalla", name: "Dahi Bhalla, Deconstructed", note: "Lentil dumplings under set yoghurt, tamarind reduction, pomegranate.", price: "PKR ——", spice: "mild", tags: ["Halal", "Vegetarian"] },
+    { id: "seekh", name: "Seekh, Charcoal & Coriander", note: "Hand-pounded beef seekh on a skewer of green chilli and coriander stalk.", price: "PKR ——", spice: "medium", tags: ["Halal"] },
+    { id: "bihari-tart", name: "Bihari Boti Tartlet", note: "Twelve-hour papaya-tenderised beef in a crisp shell.", price: "PKR ——", spice: "hot", tags: ["Halal"] },
+    { id: "fried-fish", name: "Fried Fish, Ravi Style", note: "Rohu in ajwain batter, chaat masala, lime.", price: "PKR ——", spice: "medium", tags: ["Halal"], sourcing: "River rohu, sourced Thursdays." }
+  ]},
+  { id: "grill", title: "Grill & Charcoal", kicker: "Mango wood, clay, open flame", dishes: [
+    { id: "champ", name: "The Champ", note: "Mutton chops in raw papaya and white pepper, finished over mango wood.", price: "PKR ——", spice: "medium", tags: ["Halal"] },
+    { id: "chargha", name: "Chargha, Whole Bird", note: "Steamed a full day in spice, then fried to lacquer. Serves two.", price: "PKR ——", spice: "medium", tags: ["Halal", "Serves two"] },
+    { id: "malai-boti", name: "Malai Boti, Kashmiri Chilli", note: "Chicken thigh set in cream and cheese overnight.", price: "PKR ——", spice: "mild", tags: ["Halal", "Contains dairy"] },
+    { id: "quail", name: "Tandoori Quail", note: "Four birds, yoghurt marinade, burnt lemon.", price: "PKR ——", spice: "medium", tags: ["Halal"] },
+    { id: "reshmi", name: "Reshmi Kebab, Almond", note: "Silk-textured chicken kebab bound with almond paste.", price: "PKR ——", spice: "mild", tags: ["Halal", "Contains nuts"] }
+  ]},
+  { id: "rice", title: "Rice & Biryani", kicker: "Sealed, layered, opened at your table", dishes: [
+    { id: "lahori-biryani", name: "Lahori Biryani, Sealed", note: "Layered in a clay pot, sealed with dough, opened at your table.", price: "PKR ——", spice: "hot", tags: ["Halal"], sourcing: "Aged sella rice, eighteen months." },
+    { id: "yakhni-pulao", name: "Mutton Yakhni Pulao", note: "Rice cooked in the meat's own broth; no colour, no shortcuts.", price: "PKR ——", spice: "mild", tags: ["Halal"] },
+    { id: "prawn-biryani", name: "Prawn Biryani, Coastal Line", note: "Karachi prawns, the Lahori masala.", price: "PKR ——", spice: "medium", tags: ["Halal"] },
+    { id: "zarda", name: "Zarda Pulao Bahar", note: "Saffron sweet rice with khoya, pistachio, candied orange.", price: "PKR ——", spice: "mild", tags: ["Halal", "Vegetarian", "Contains nuts"] }
+  ]}
+  ,{ id: "curries", title: "Curries", kicker: "The long fires", dishes: [
+    { id: "nihari", name: "Nihari, Eight Hours", note: "Shank simmered overnight, marrow served in the bone, first cut of the morning.", price: "PKR ——", spice: "hot", tags: ["Halal"], sourcing: "Beef shank from a single supplier since 2014." },
+    { id: "paya", name: "Paya, Clarified", note: "Trotters reduced to a clear, gelatinous broth.", price: "PKR ——", spice: "medium", tags: ["Halal"] },
+    { id: "haleem", name: "Haleem, Stone-Ground", note: "Seven grains and beef pounded to silk over nine hours.", price: "PKR ——", spice: "medium", tags: ["Halal"] },
+    { id: "palak-paneer", name: "Palak Paneer, House Cheese", note: "Spinach cooked twice, cheese set that morning.", price: "PKR ——", spice: "mild", tags: ["Halal", "Vegetarian"] },
+    { id: "daal-maash", name: "Daal Maash, Butter-Finished", note: "White lentils, ginger julienne, burnt-butter tarka.", price: "PKR ——", spice: "mild", tags: ["Halal", "Vegetarian"] }
+  ]},
+  { id: "street", title: "Street, Reimagined", kicker: "Anarkali and Gawalmandi, plated", dishes: [
+    { id: "gol-gappa", name: "Anarkali Gol Gappa Flight", note: "Six shells, six waters, served on a chilled slate.", price: "PKR ——", spice: "medium", tags: ["Halal", "Vegetarian"] },
+    { id: "fruit-chaat", name: "Fruit Chaat, Winter Cut", note: "Whatever the mandi had best this morning, black salt, orange juice.", price: "PKR ——", spice: "mild", tags: ["Halal", "Vegan"], sourcing: "Cut to order from the morning's Badami Bagh lot." }
+  ]},
+  { id: "desserts", title: "Desserts", kicker: "Milk, reduced and reduced again", dishes: [
+    { id: "kulfi-falooda", name: "Kulfi Falooda, Tall Glass", note: "Slow-churned khoya kulfi, rose vermicelli, basil seed.", price: "PKR ——", spice: "mild", tags: ["Halal", "Vegetarian", "Contains nuts"] },
+    { id: "shahi-tukray", name: "Shahi Tukray", note: "Ghee-fried bread in cardamom rabri, silver leaf.", price: "PKR ——", spice: "mild", tags: ["Halal", "Vegetarian", "Contains nuts"] },
+    { id: "gajar-halwa", name: "Gajar Halwa, Winter Only", note: "Red carrots reduced in milk for five hours.", price: "PKR ——", spice: "mild", tags: ["Halal", "Vegetarian"], sourcing: "Red carrots from Kasur, December through February." },
+    { id: "rabri", name: "Rabri Set, Pistachio", note: "Milk reduced to ribbons, chilled overnight.", price: "PKR ——", spice: "mild", tags: ["Halal", "Vegetarian", "Contains nuts"] }
+  ]},
+  { id: "drinks", title: "Drinks", kicker: "Clay, ice, forty minutes of whisking", dishes: [
+    { id: "kashmiri-chai", name: "Kashmiri Chai, Pink Salt", note: "Whisked forty minutes to colour.", price: "PKR ——", spice: "mild", tags: ["Halal", "Vegetarian"] },
+    { id: "doodh-soda", name: "Doodh Soda, House", note: "Cold milk and soda, the old Lahori order.", price: "PKR ——", spice: "mild", tags: ["Halal", "Vegetarian"] },
+    { id: "lassi", name: "Lassi, Sweet or Salted", note: "Clay tumbler, churned to order.", price: "PKR ——", spice: "mild", tags: ["Halal", "Vegetarian"] },
+    { id: "sardai", name: "Sardai", note: "Almond, melon seed, fennel, cooled on ice.", price: "PKR ——", spice: "mild", tags: ["Halal", "Vegan", "Contains nuts"] },
+    { id: "sikanjabeen", name: "Sikanjabeen", note: "Mint, lime, black salt.", price: "PKR ——", spice: "mild", tags: ["Halal", "Vegan"] }
+  ]}
+];
+function esc(s) { var d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
+function whatsappLink(message) { return "https://wa.me/" + RESTAURANT.whatsapp + "?text=" + encodeURIComponent(message); }
+/* ---- Render menu page ---- */
+(function renderMenu() {
+  var host = document.getElementById("page-menu");
+  var nav = MENU.map(function (c) { return '<a href="#/menu#' + c.id + '">' + esc(c.title) + "</a>"; }).join("");
+  var sections = MENU.map(function (c) {
+    var dishes = c.dishes.map(function (d) {
+      return '<li><div class="dish-top"><h3>' + esc(d.name) +
+        '</h3><span class="dotted-lead"></span><span class="price">' + esc(d.price) + "</span></div>" +
+        '<p class="dish-note">' + esc(d.note) + "</p>" +
+        (d.sourcing ? '<p class="dish-sourcing">' + esc(d.sourcing) + "</p>" : "") +
+        '<p class="dish-meta"><span class="spice">' + SPICE_MARK[d.spice] + " " + SPICE_LABEL[d.spice] + "</span>" +
+        d.tags.map(function (t) { return "<span>" + esc(t) + "</span>"; }).join("") + "</p></li>";
+    }).join("");
+    return '<section class="cat" id="' + c.id + '"><div class="cat-head"><h2 class="font-display">' +
+      esc(c.title) + '</h2><p class="kicker">' + esc(c.kicker) +
+      '</p><div class="rule-brass"></div></div><ul class="dish-list">' + dishes + "</ul></section>";
+  }).join("");
+  host.innerHTML =
+    '<header class="page-head"><p class="eyebrow">Kitchen</p><h1 class="font-display">The Menu</h1>' +
+    '<p class="lede">Everything is halal. Spice is marked ○ mild · ◐ medium · ● hot. Where a dish depends on a particular supplier or season, we say so.</p></header>' +
+    '<nav class="cat-nav">' + nav + '</nav><div class="menu-wrap" style="margin-top:4rem;">' + sections + '</div>' +
+    '<p class="menu-footnote">Please tell us about allergies when you reserve. Several dishes are finished with nuts, dairy or ghee in a shared kitchen.</p>';
+})();
+
+/* ---- Render footer / visit / gallery ---- */
+(function renderStatic() {
+  var hoursDl = function () {
+    return RESTAURANT.hours.map(function (h) {
+      return "<div><dt>" + esc(h.day) + "</dt><dd>" + esc(h.time) + "</dd></div>";
+    }).join("");
+  };
+  document.getElementById("footer-hours").innerHTML = hoursDl();
+  document.getElementById("visit-hours").innerHTML = hoursDl();
+  var telHref = "tel:" + RESTAURANT.phone.replace(/\s/g, "");
+  var ft = document.getElementById("footer-tel");
+  ft.href = telHref; ft.textContent = RESTAURANT.phone;
+  var vt = document.getElementById("visit-tel");
+  vt.href = telHref; vt.textContent = RESTAURANT.phone;
+  document.getElementById("order-wa").href =
+    whatsappLink("Assalam-o-alaikum — I would like to place an order from Mehfil.");
+  document.getElementById("year").textContent = new Date().getFullYear();
+  var photos = [
+    ["dish-champ.jpg", "Mutton champ on brass over mango-wood coals"],
+    ["dish-biryani.jpg", "Sealed clay-pot biryani, dough crust broken"],
+    ["hero-nihari.jpg", "Nihari in a hammered brass bowl"],
+    ["kitchen-tandoor.jpg", "The tandoor at four in the afternoon"],
+    ["chef-portrait.jpg", "Ustad Iqbal at the pass"],
+    ["ambience.jpg", "The dining room, dark green and brass"]
+  ];
+  document.getElementById("gallery-grid").innerHTML = photos.map(function (p) {
+    return '<img loading="lazy" data-full="frontend/src/assets/' + p[0] +
+      '" src="frontend/src/assets/' + p[0] + '" alt="' + esc(p[1]) + '" />';
+  }).join("");
+})();
+
+/* ---- Lightbox ---- */
+(function () {
+  var lb = document.getElementById("lightbox");
+  var img = lb.querySelector("img");
+  document.getElementById("gallery-grid").addEventListener("click", function (e) {
+    if (e.target.tagName !== "IMG") return;
+    img.src = e.target.getAttribute("data-full");
+    img.alt = e.target.alt;
+    lb.classList.add("open");
+  });
+  lb.addEventListener("click", function (e) {
+    if (e.target === lb || e.target.classList.contains("close")) lb.classList.remove("open");
+  });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") lb.classList.remove("open"); });
+})();
+/* ---- Router (hash-based: #/menu, #/reservations, #/menu#curries …) ---- */
+(function router() {
+  var pages = ["home", "menu", "reservations", "story", "chef", "gallery", "visit", "order"];
+  function currentRoute() {
+    var h = location.hash.replace(/^#\/?/, ""); /* "menu#curries" or "" */
+    var parts = h.split("#");
+    var page = parts[0] || "home";
+    return { page: pages.indexOf(page) >= 0 ? page : "home", anchor: parts[1] || null };
+  }
+  function render() {
+    var r = currentRoute();
+    pages.forEach(function (p) {
+      document.getElementById("page-" + p).classList.toggle("active", p === r.page);
+    });
+    document.querySelectorAll("#nav-desktop a").forEach(function (a) {
+      a.classList.toggle("active", a.getAttribute("href") === "#/" + r.page);
+    });
+    document.getElementById("mobile-overlay").classList.remove("open");
+    closeMobile();
+    if (r.anchor) {
+      var el = document.getElementById(r.anchor);
+      if (el) { el.scrollIntoView(); return; }
+    }
+    window.scrollTo(0, 0);
+  }
+  window.addEventListener("hashchange", render);
+  render();
+})();
+
+/* ---- Header scroll state + mobile menu ---- */
+var header = document.getElementById("site-header");
+function onScroll() { header.classList.toggle("scrolled", window.scrollY > 24); }
+window.addEventListener("scroll", onScroll, { passive: true });
+onScroll();
+
+var overlay = document.getElementById("mobile-overlay");
+var burger = document.getElementById("burger");
+function closeMobile() {
+  var b = document.getElementById("burger");
+  document.getElementById("mobile-overlay").classList.remove("open");
+  b.textContent = "☰";
+  b.setAttribute("aria-label", "Open menu");
+}
+burger.addEventListener("click", function () {
+  var open = overlay.classList.toggle("open");
+  burger.textContent = open ? "×" : "☰";
+  burger.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+});
+overlay.addEventListener("click", function (e) { if (e.target.tagName === "A") closeMobile(); });
+/* ---- Reservation form (validation + WhatsApp confirmation) ---- */
+(function reservations() {
+  var slots = ["6:00", "6:45", "7:30", "8:15", "9:00", "9:45", "10:30"];
+  var occasions = ["No occasion", "Anniversary", "Birthday", "Business", "Family"];
+  var time = "7:30", guests = "2";
+
+  var timeRow = document.getElementById("time-chips");
+  timeRow.innerHTML = slots.map(function (s) {
+    return '<button type="button" class="chip' + (s === time ? " on" : "") + '" data-time="' + s + '">' + s + "</button>";
+  }).join("");
+  timeRow.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-time]");
+    if (!b) return;
+    time = b.getAttribute("data-time");
+    timeRow.querySelectorAll(".chip").forEach(function (c) { c.classList.toggle("on", c === b); });
+  });
+
+  var guestRow = document.getElementById("guest-chips");
+  guestRow.innerHTML = ["1", "2", "3", "4", "5", "6", "7"].map(function (g) {
+    return '<button type="button" class="chip chip-sq' + (g === guests ? " on" : "") + '" data-guests="' + g + '">' + g + "</button>";
+  }).join("");
+  document.getElementById("guest-hint").textContent =
+    "Tables for eight or more — please call the maître d' on " + RESTAURANT.phone + ".";
+  guestRow.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-guests]");
+    if (!b) return;
+    guests = b.getAttribute("data-guests");
+    guestRow.querySelectorAll(".chip").forEach(function (c) { c.classList.toggle("on", c === b); });
+  });
+
+  var occ = document.getElementById("occasion-select");
+  occ.innerHTML = occasions.map(function (o) { return '<option value="' + o + '">' + o + "</option>"; }).join("");
+
+  var errEl = document.getElementById("form-error");
+  function fail(msg) { errEl.textContent = msg; errEl.hidden = false; }
+
+  document.getElementById("reservation-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var fd = new FormData(e.target);
+    var name = String(fd.get("name") || "").trim();
+    var phone = String(fd.get("phone") || "").trim();
+    var date = String(fd.get("date") || "");
+    var requests = String(fd.get("requests") || "").trim();
+    if (name.length < 2) return fail("Please enter your name");
+    if (phone.length < 7) return fail("Please enter a reachable number");
+    if (!/^[0-9+\-\s()]+$/.test(phone)) return fail("Numbers only");
+    if (!date) return fail("Choose a date");
+    if (requests.length > 400) return fail("Please keep this under 400 characters");
+    errEl.hidden = true;
+    var message = [
+      "Reservation request — " + RESTAURANT.name,
+      "Name: " + name,
+      "Phone: " + phone,
+      "Date: " + date,
+      "Time: " + time + " pm",
+      "Guests: " + guests,
+      "Occasion: " + String(fd.get("occasion") || ""),
+      requests ? "Requests: " + requests : ""
+    ].filter(Boolean).join("\n");
+    window.open(whatsappLink(message), "_blank", "noopener");
+  });
+})();
+
+
+
+
+
+</script>
+
+
+
+
+
+</body>
+</html>

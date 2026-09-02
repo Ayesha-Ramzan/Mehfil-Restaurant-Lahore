@@ -1,0 +1,162 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Design system — "Mehfil" · elite Lahori dining
+ * Dark charcoal + deep green, brass accent, cream text.
+ * Display: Cormorant Garamond. Body: Karla.
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Karla", ui-sans-serif, system-ui, sans-serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+
+  --color-brass: var(--brass);
+  --color-brass-soft: var(--brass-soft);
+  --color-ink: var(--ink);
+  --color-forest: var(--forest);
+  --color-ember: var(--ember);
+  --color-sidebar: var(--card);
+  --color-sidebar-foreground: var(--foreground);
+  --color-sidebar-primary: var(--primary);
+  --color-sidebar-primary-foreground: var(--primary-foreground);
+  --color-sidebar-accent: var(--accent);
+  --color-sidebar-accent-foreground: var(--accent-foreground);
+  --color-sidebar-border: var(--border);
+  --color-sidebar-ring: var(--ring);
+
+  --color-chart-1: var(--brass);
+  --color-chart-2: var(--forest);
+  --color-chart-3: var(--ember);
+  --color-chart-4: var(--brass-soft);
+  --color-chart-5: var(--muted-foreground);
+}
+
+:root {
+  --radius: 0.125rem;
+
+  --background: oklch(0.16 0.008 60);
+  --foreground: oklch(0.94 0.012 85);
+  --ink: oklch(0.12 0.008 60);
+  --forest: oklch(0.26 0.035 155);
+  --ember: oklch(0.58 0.16 45);
+
+  --card: oklch(0.2 0.009 60);
+  --card-foreground: oklch(0.94 0.012 85);
+  --popover: oklch(0.19 0.009 60);
+  --popover-foreground: oklch(0.94 0.012 85);
+
+  --brass: oklch(0.76 0.1 82);
+  --brass-soft: oklch(0.62 0.07 82);
+  --primary: oklch(0.76 0.1 82);
+  --primary-foreground: oklch(0.16 0.008 60);
+  --secondary: oklch(0.24 0.01 60);
+  --secondary-foreground: oklch(0.94 0.012 85);
+  --muted: oklch(0.23 0.008 60);
+  --muted-foreground: oklch(0.68 0.014 80);
+  --accent: oklch(0.26 0.035 155);
+  --accent-foreground: oklch(0.94 0.012 85);
+  --destructive: oklch(0.55 0.17 27);
+  --destructive-foreground: oklch(0.96 0.01 85);
+
+  --border: oklch(0.3 0.012 70);
+  --input: oklch(0.3 0.012 70);
+  --ring: oklch(0.76 0.1 82);
+
+  --shadow-deep: 0 30px 80px -40px oklch(0 0 0 / 0.9);
+  --gradient-veil: linear-gradient(
+    to top,
+    oklch(0.14 0.008 60) 0%,
+    oklch(0.14 0.008 60 / 0.7) 35%,
+    oklch(0.14 0.008 60 / 0.15) 70%,
+    transparent 100%
+  );
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+}
+
+@utility eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--brass-soft);
+}
+
+@utility rule-brass {
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--brass-soft),
+    transparent
+  );
+  height: 1px;
+}
+
+@utility veil {
+  background: var(--gradient-veil);
+}
+
+@utility dotted-lead {
+  border-bottom: 1px dotted var(--border);
+}
