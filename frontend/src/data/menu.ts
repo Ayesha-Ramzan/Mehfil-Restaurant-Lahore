@@ -349,7 +349,7 @@ export const RESTAURANT = {
   name: "Mehfil",
   descriptor: "Lahore",
   phone: "+92 300 000 0000",
-  whatsapp: "923244060602",
+  whatsapp: "00000000000",
   address: "12 Ganga Ram Building, Mall Road, Lahore",
   hours: [
     { day: "Tuesday — Thursday", time: "6:00 pm — 12:30 am" },
