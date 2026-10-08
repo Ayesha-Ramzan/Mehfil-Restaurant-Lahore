@@ -6,6 +6,9 @@ Nihari at eight hours. Sealed clay-pot biryani. Mango-wood grill over a fire
 that never drops. A table set in a colonial-era room with carved screens,
 marble floors, and brass lamps that stay lit until the last guest leaves.
 
+## Demo  <img width="1735" height="906" alt="Mehfil Lahore_ Slow-Fired Flavours" src="https://github.com/user-attachments/assets/b3d96474-a4e3-45e7-86b8-a558499105eb" />
+
+
 ---
 
 ## The Site
